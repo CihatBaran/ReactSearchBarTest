@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from "react"
+import { Autocomplete } from '@mui/material';
+import TextField  from "@mui/material/TextField"
+import React from 'react';
+import "./App.css"
+import Elastic from './service/elastic';
 
 function App() {
+  const [options, setOptions]  = useState(["Something"]);
+  const elastic = new Elastic();
+  
+  const handleKeyDown = async (e) => {
+    let elasticSearchCallWord = e.target.value
+    const result = await elastic.getOptions(elasticSearchCallWord)
+    setOptions(result.map(el => el.title))
+    
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={options}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} onKeyDown={handleKeyDown} label="Movie" />}
+      />
     </div>
   );
 }
